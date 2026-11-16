@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shakespearean Lexicon A–Z | 莎士比亞詞彙典藏館</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-parchment: #F8F5EE;
+      --bg-card: #FFFDF9;
+      --velvet-burgundy: #3B1319;
+      --velvet-dark: #250A0E;
+      --antique-gold: #B08D57;
+      --gold-light: #DFC89A;
+      --ink-primary: #1F1B18;
+      --ink-secondary: #584E45;
+      --border-subtle: rgba(176, 141, 87, 0.35);
+      --shadow-museum: 0 12px 32px rgba(31, 27, 24, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-parchment);
+      color: var(--ink-primary);
+      font-family: 'Noto Serif TC', Georgia, serif;
+      line-height: 1.65;
+      background-image: radial-gradient(rgba(176, 141, 87, 0.08) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* 博物館酒紅絲絨頂欄 */
+    header {
+      background: linear-gradient(135deg, var(--velvet-burgundy) 0%, var(--velvet-dark) 100%);
+      color: var(--bg-parchment);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      border-bottom: 3px solid var(--antique-gold);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .museum-subtitle {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.25em;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+
+    .header-desc {
+      font-size: 0.95rem;
+      color: rgba(248, 245, 238, 0.82);
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+    }
+
+    /* 導覽控制列 */
+    .controls-bar {
+      max-width: 1240px;
+      margin: -1.35rem auto 1.5rem;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .mode-tabs {
+      display: inline-flex;
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      border-radius: 999px;
+      padding: 0.25rem;
+      box-shadow: var(--shadow-museum);
+    }
+
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 0.5rem 1.25rem;
+      border-radius: 999px;
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--velvet-burgundy);
+      color: var(--gold-light);
+    }
+
+    .search-box {
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      border-radius: 999px;
+      padding: 0.55rem 1.2rem;
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.9rem;
+      color: var(--ink-primary);
+      width: 240px;
+      box-shadow: var(--shadow-museum);
+      outline: none;
+    }
+
+    /* A-Z 字母快速導覽索引 */
+    .az-index {
+      max-width: 1240px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.35rem;
+    }
+
+    .az-pill {
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--velvet-burgundy);
+      font-family: 'Cinzel', serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .az-pill:hover, .az-pill.active {
+      background: var(--velvet-burgundy);
+      color: var(--gold-light);
+      border-color: var(--velvet-burgundy);
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto 4rem;
+      padding: 0 1.25rem;
+    }
+
+    /* 畫廊總覽模式 Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .lexicon-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--shadow-museum);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+    }
+
+    .lexicon-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(31, 27, 24, 0.14);
+    }
+
+    /* 1:1 正方形滿版油畫框 */
+    .painting-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #231F1D;
+      border-bottom: 2px solid var(--antique-gold);
+      overflow: hidden;
+    }
+
+    .painting-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .lexicon-card:hover .painting-frame img {
+      transform: scale(1.03);
+    }
+
+    .letter-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 38px;
+      height: 38px;
+      background: rgba(37, 10, 14, 0.88);
+      border: 1px solid var(--antique-gold);
+      color: var(--gold-light);
+      font-family: 'Cinzel', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+      padding: 1.4rem 1.5rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .word-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .word-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--velvet-burgundy);
+      line-height: 1.2;
+    }
+
+    .word-phonetic {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--ink-secondary);
+      font-style: italic;
+    }
+
+    .word-meaning {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink-primary);
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .quote-box {
+      background: rgba(176, 141, 87, 0.08);
+      border-left: 3px solid var(--antique-gold);
+      padding: 0.85rem 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .quote-en {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--ink-primary);
+      margin-bottom: 0.35rem;
+      line-height: 1.45;
+    }
+
+    .quote-zh {
+      font-size: 0.88rem;
+      color: var(--ink-secondary);
+      margin-bottom: 0.35rem;
+    }
+
+    .quote-source {
+      font-size: 0.8rem;
+      color: var(--velvet-burgundy);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .audio-controls {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      padding-top: 0.5rem;
+    }
+
+    .audio-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--antique-gold);
+      background: transparent;
+      color: var(--velvet-burgundy);
+      font-family: 'Noto Serif TC', serif;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .audio-btn:hover {
+      background: var(--velvet-burgundy);
+      color: var(--gold-light);
+    }
+
+    .audio-btn.playing {
+      background: var(--antique-gold);
+      color: #FFF;
+    }
+
+    /* 單卡精讀模式 Focus */
+    .focus-container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      border-radius: 8px;
+      box-shadow: var(--shadow-museum);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+    }
+
+    @media (max-width: 780px) {
+      .focus-container { grid-template-columns: 1fr; }
+    }
+
+    .focus-nav {
+      display: flex;
+      justify-content: space-between;
+      max-width: 960px;
+      margin: 1rem auto 0;
+    }
+
+    .nav-arrow {
+      padding: 0.6rem 1.3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      color: var(--velvet-burgundy);
+      font-family: 'Noto Serif TC', serif;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .nav-arrow:hover {
+      background: var(--velvet-burgundy);
+      color: var(--gold-light);
+    }
+
+    /* 隨堂測驗模式 Quiz */
+    .quiz-box {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: var(--shadow-museum);
+      text-align: center;
+    }
+
+    .quiz-img {
+      width: 240px;
+      height: 240px;
+      object-fit: cover;
+      border: 2px solid var(--antique-gold);
+      border-radius: 4px;
+      margin: 0 auto 1.25rem;
+      display: block;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-top: 1.5rem;
+    }
+
+    .quiz-opt {
+      padding: 0.85rem;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-parchment);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-opt:hover { border-color: var(--velvet-burgundy); }
+    .quiz-opt.correct { background: #2E5A36; color: #FFF; border-color: #2E5A36; }
+    .quiz-opt.wrong { background: #8B2626; color: #FFF; border-color: #8B2626; }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--ink-secondary);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="museum-subtitle">A–Z Illustrated Literary Gallery</div>
+  <h1>Shakespearean Lexicon</h1>
+  <p class="header-desc">莎士比亞詞彙典藏館 — 結合印象派油畫意象、戲劇原典引文與標準英式朗讀的文學單字庫</p>
+</header>
+
+<div class="controls-bar">
+  <div class="mode-tabs">
+    <button class="tab-btn active" data-mode="gallery">畫廊總覽 Gallery</button>
+    <button class="tab-btn" data-mode="focus">單卡精讀 Focus</button>
+    <button class="tab-btn" data-mode="quiz">隨堂測驗 Quiz</button>
+  </div>
+  <input type="text" id="searchInput" class="search-box" placeholder="搜尋單字、中文或劇作..." />
+</div>
+
+<div class="az-index" id="azIndex"></div>
+
+<main id="appContainer"></main>
+
+<footer>
+  Shakespearean Lexicon A–Z · Museum Aesthetic Edition · 專為英語文學與詞彙賞析設計
+</footer>
+
+<script>
+const LEXICON_DATA = [
+  {
+    letter: "A", word: "apparition", phonetic: "/ˌæp.əˈrɪʃ.ən/", pos: "n.",
+    meaning: "幽靈、幻影、鬼魂",
+    quoteEn: "I think it weakness of mine eyes that shapes this monstrous apparition.",
+    quoteZh: "我想是我雙眼衰弱，才幻化出這可怕的幽靈。",
+    source: "《凱撒大帝》Julius Caesar, Act IV, Scene 3",
+    note: "勃魯托斯在戰前深夜看見凱撒鬼魂時的台詞，展現內心的罪惡感與動搖。"
+  },
+  {
+    letter: "B", word: "baleful", phonetic: "/ˈbeɪl.fəl/", pos: "adj.",
+    meaning: "惡毒的、不祥的、有害的",
+    quoteEn: "With baleful weeds and precious-juiced flowers.",
+    quoteZh: "籃中盛著劇毒的野草，與汁液珍貴的奇花。",
+    source: "《羅密歐與茱麗葉》Romeo and Juliet, Act II, Scene 3",
+    note: "勞倫斯神父清晨採集草藥時的獨白，象徵自然萬物兼有療癒與毀滅的雙重力量。"
+  },
+  {
+    letter: "C", word: "compunctious", phonetic: "/kəmˈpʌŋk.ʃəs/", pos: "adj.",
+    meaning: "良心不安的、悔恨的、憐憫的",
+    quoteEn: "That no compunctious visitings of nature shake my fell purpose.",
+    quoteZh: "莫讓任何天性的憐憫與悔意，動搖我冷酷的決心。",
+    source: "《馬克白》Macbeth, Act I, Scene 5",
+    note: "馬克白夫人讀完丈夫來信後，祈求黑暗力量奪去她心中人性溫情的名句。"
+  },
+  {
+    letter: "D", word: "dolour", phonetic: "/ˈdɒl.ər/", pos: "n.",
+    meaning: "悲痛、哀傷、淒苦",
+    quoteEn: "You shall have as many dolours for thy daughters as thou canst tell in a year.",
+    quoteZh: "你為女兒們承受的悲痛，多得你一年都數不完。",
+    source: "《李爾王》King Lear, Act II, Scene 4",
+    note: "弄臣利用 dolour（悲痛）與 dollar（銀幣）的諧音雙關，諷刺李爾王分封國土後的悲慘處境。"
+  },
+  {
+    letter: "E", word: "enmity", phonetic: "/ˈen.mə.ti/", pos: "n.",
+    meaning: "敵意、深仇、怨恨",
+    quoteEn: "I do not know that Englishman alive with whom my soul is any jot at enmity.",
+    quoteZh: "世上活著的英國人中，我不知有哪一位與我的靈魂有絲毫深仇。",
+    source: "《理查三世》Richard III, Act II, Scene 1",
+    note: "格洛斯特公爵（後來的理查三世）在宮廷眾人面前偽裝和平寬容的經典反諷台詞。"
+  },
+  {
+    letter: "F", word: "fardel", phonetic: "/ˈfɑː.dəl/", pos: "n.",
+    meaning: "重擔、包袱、苦差事",
+    quoteEn: "Who would fardels bear, to grunt and sweat under a weary life?",
+    quoteZh: "誰願意背負這些重擔，在疲憊的人生下呻吟流汗？",
+    source: "《哈姆雷特》Hamlet, Act III, Scene 1",
+    note: "出自最著名的「生存還是毀滅」獨白，比喻塵世生活中的種種苦難與壓迫。"
+  },
+  {
+    letter: "G", word: "gall", phonetic: "/ɡɔːl/", pos: "n.",
+    meaning: "膽汁、怨恨、惡毒",
+    quoteEn: "For it cannot be but I am pigeon-livered and lack gall to make oppression bitter.",
+    quoteZh: "必定是因為我生就鴿子般的軟心腸，缺乏膽汁去感受壓迫的苦澀。",
+    source: "《哈姆雷特》Hamlet, Act II, Scene 2",
+    note: "文藝復興時期體液說認為膽汁代表憤怒與勇氣，哈姆雷特藉此痛責自己遲遲未能復仇。"
+  },
+  {
+    letter: "H", word: "harbinger", phonetic: "/ˈhɑː.bɪn.dʒər/", pos: "n.",
+    meaning: "先驅、預兆、報信者",
+    quoteEn: "I'll be myself the harbinger and make joyful the hearing of my wife with your approach.",
+    quoteZh: "我願親自做那報信的先驅，將陛下駕臨的喜訊傳入內子耳中。",
+    source: "《馬克白》Macbeth, Act I, Scene 4",
+    note: "馬克白在鄧肯國王宣布將駕臨其城堡後說出的雙關語，表面效忠實則暗藏殺機。"
+  },
+  {
+    letter: "I", word: "incarnadine", phonetic: "/ɪnˈkɑː.nə.daɪn/", pos: "v.",
+    meaning: "把……染成鮮紅色、使呈肉紅色",
+    quoteEn: "No, this my hand will rather the multitudinous seas incarnadine, making the green one red.",
+    quoteZh: "不，我這雙手反倒會將無邊無際的海洋染紅，使碧綠的海水化作一片血紅。",
+    source: "《馬克白》Macbeth, Act II, Scene 2",
+    note: "莎士比亞將原本作形容詞的拉丁借詞轉化為動詞，創造出英語文學中最震撼的視覺意象之一。"
+  },
+  {
+    letter: "J", word: "jocund", phonetic: "/ˈdʒɒk.ənd/", pos: "adj.",
+    meaning: "歡樂的、愉快的、欣喜的",
+    quoteEn: "Night's candles are burnt out, and jocund day stands tiptoe on the misty mountain tops.",
+    quoteZh: "夜的燭火已燃盡，歡欣的白晝正踮起腳尖，立於薄霧繚繞的山巔。",
+    source: "《羅密歐與茱麗葉》Romeo and Juliet, Act III, Scene 5",
+    note: "黎明時分羅密歐被迫流亡前與茱麗葉告別，明媚的晨光與兩人的生離死別形成強烈對比。"
+  },
+  {
+    letter: "K", word: "knave", phonetic: "/neɪv/", pos: "n.",
+    meaning: "無賴、惡棍、卑鄙小人",
+    quoteEn: "Thou whoreson zed! Thou unnecessary letter! My lord, if you will give me leave, I will tread this unbolted villain into mortar.",
+    quoteZh: "你這多餘的字母 Z！大人若准許，我定要把這未篩過的惡棍無賴踩成灰泥！",
+    source: "《李爾王》King Lear, Act II, Scene 2",
+    note: "肯特伯爵痛罵奸佞管家奧斯瓦爾德的經典連珠炮罵詞（莎劇中極具代表性的斥責場景）。"
+  },
+  {
+    letter: "L", word: "labyrinth", phonetic: "/ˈlæb.ə.rɪnθ/", pos: "n.",
+    meaning: "迷宮、錯綜複雜的處境",
+    quoteEn: "There is a labyrinth in thy brain, and the thread is lost.",
+    quoteZh: "你的腦中彷彿有一座迷宮，而引路的線索早已遺失。",
+    source: "《特洛伊羅斯與克瑞西達》Troilus and Cressida, Act II, Scene 3",
+    note: "典出希臘神話克里特島迷宮與阿里阿德涅之線，用來諷刺人物思緒混亂、自困其中。"
+  },
+  {
+    letter: "M", word: "melancholy", phonetic: "/ˈmel.ən.kɒl.i/", pos: "n.",
+    meaning: "憂鬱、沉思的哀愁",
+    quoteEn: "I can suck melancholy out of a song, as a weasel sucks eggs.",
+    quoteZh: "我能從一首歌裡吸出憂鬱，就像黃鼠狼吸乾鳥蛋一樣。",
+    source: "《皆大歡喜》As You Like It, Act II, Scene 5",
+    note: "亞登森林中的哲學家賈奎斯（Jaques）對自我憂鬱氣質的經典調侃。"
+  },
+  {
+    letter: "N", word: "niggard", phonetic: "/ˈnɪɡ.əd/", pos: "n. / v.",
+    meaning: "吝嗇鬼；吝惜、小氣地給予",
+    quoteEn: "Within thine own bud buriest thy content, and, tender churl, makest waste in niggarding.",
+    quoteZh: "你把自己的芳華深埋在花蕾之中，溫柔的吝嗇鬼啊，你在吝惜中反而造成了浪費。",
+    source: "《十四行詩》Sonnet 1",
+    note: "十四行詩開篇首首，勸誡美少年不應吝惜自身的美貌與青春，而應繁衍後代延續美麗。"
+  },
+  {
+    letter: "O", word: "obsequious", phonetic: "/əbˈsiː.kwi.əs/", pos: "adj.",
+    meaning: "諂媚的、逢迎的、奴顏婢膝的",
+    quoteEn: "Many a duteous and knee-crooking knave that, doting on his own obsequious bondage, wears out his time.",
+    quoteZh: "多少只會屈膝奉承的奴才，沉溺於自己卑躬屈膝的枷鎖中，虛度一生。",
+    source: "《奧賽羅》Othello, Act I, Scene 1",
+    note: "反派伊阿古（Iago）在劇作開頭批判虛偽的宮廷僕從文化，為自己的陰謀作辯解。"
+  },
+  {
+    letter: "P", word: "perfidious", phonetic: "/pəˈfɪd.i.əs/", pos: "adj.",
+    meaning: "背信棄義的、不忠的、奸詐的",
+    quoteEn: "My brother and thy uncle, called Antonio—I pray thee, mark me—that a brother should be so perfidious!",
+    quoteZh: "我的弟弟、也就是你的叔父安東尼奧——聽我說——親兄弟竟會如此背信棄義！",
+    source: "《暴風雨》The Tempest, Act I, Scene 2",
+    note: "米蘭公爵普洛斯彼羅向女兒米蘭達訴說當年遭親弟篡位並流放荒島的往事。"
+  },
+  {
+    letter: "Q", word: "quiddity", phonetic: "/ˈkwɪd.ə.ti/", pos: "n.",
+    meaning: "事物的本質；繁瑣的詭辯",
+    quoteEn: "Where be his quiddities now, his quillets, his cases, his tenures, and his tricks?",
+    quoteZh: "他那些高深的詭辯、雙關語、判例、地契和花招，如今又在哪裡呢？",
+    source: "《哈姆雷特》Hamlet, Act V, Scene 1",
+    note: "哈姆雷特在墓地捧起一具疑為律師的骷髏時發出的感嘆，嘲諷生前精明在死亡面前一無是處。"
+  },
+  {
+    letter: "R", word: "rancor", phonetic: "/ˈræŋ.kər/", pos: "n.",
+    meaning: "深仇、積怨、惡意",
+    quoteEn: "Put in their hands thy bruising irons of wrath, that they may crush down with a heavy fall the usurping helmets of our adversaries!",
+    quoteZh: "將你憤怒的重鐵交到他們手中，讓宿怨與神怒重重擊碎敵人篡位的頭盔！",
+    source: "《理查三世》Richard III, Act V, Scene 3",
+    note: "里奇蒙伯爵在博斯沃思原野決戰前夕的祈禱詞，宣告結束玫瑰戰爭長年的家族深仇。"
+  },
+  {
+    letter: "S", word: "sequestration", phonetic: "/ˌsiː.kwəˈstreɪ.ʃən/", pos: "n.",
+    meaning: "隔絕、分離、隱退",
+    quoteEn: "It was a violent commencement, and thou shalt see an answerable sequestration.",
+    quoteZh: "這段感情開始得如此猛烈，你將會看到它同樣劇烈的分離與隔絕。",
+    source: "《奧賽羅》Othello, Act I, Scene 3",
+    note: "伊阿古預言奧賽羅與苔絲狄蒙娜衝動結合後，必將走向孤立與決裂。"
+  },
+  {
+    letter: "T", word: "tempestuous", phonetic: "/temˈpes.tʃu.əs/", pos: "adj.",
+    meaning: "狂暴的、暴風雨般的、劇烈的",
+    quoteEn: "Tempests themselves, high seas, and howling winds, as having sense of beauty, do omit their mortal natures.",
+    quoteZh: "就連狂風暴雨、洶湧巨浪與怒號的烈風，彷彿也懂得憐惜美貌，收斂了它們致命的本性。",
+    source: "《奧賽羅》Othello, Act II, Scene 1",
+    note: "凱西奧在賽普勒斯港口迎接平安度過海上風暴的苔絲狄蒙娜時所作的詩意讚頌。"
+  },
+  {
+    letter: "U", word: "usurper", phonetic: "/juːˈzɜː.pər/", pos: "n.",
+    meaning: "篡位者、奪權者",
+    quoteEn: "Show us the hand of God that hath dismissed us from our stewardship; for well we know, no hand of blood and bone can gripe the sacred handle of our sceptre, unless he do profane, steal, or usurp.",
+    quoteZh: "讓我們看看是上帝的哪一隻手罷免了我們的王權；凡俗血肉之手若非褻瀆、竊取或篡位，絕不能握住這神聖的權杖。",
+    source: "《理查二世》Richard II, Act III, Scene 3",
+    note: "理查二世面對波林勃洛克逼宮時，捍衛「君權神授」並控訴對方為篡位者的悲壯演說。"
+  },
+  {
+    letter: "V", word: "visage", phonetic: "/ˈvɪz.ɪdʒ/", pos: "n.",
+    meaning: "面容、臉色、外觀",
+    quoteEn: "Trimmed in forms and visages of duty, keep yet their hearts attending on themselves.",
+    quoteZh: "他們用忠誠的禮節與面容裝飾自己，內心卻只盤算著自己的利益。",
+    source: "《奧賽羅》Othello, Act I, Scene 1",
+    note: "揭示文藝復興戲劇最核心的主題之一：「表象（visage）與真實（reality）的落差」。"
+  },
+  {
+    letter: "W", word: "woeful", phonetic: "/ˈwəʊ.fəl/", pos: "adj.",
+    meaning: "悲傷的、哀痛的、淒慘的",
+    quoteEn: "For never was a story of more woe than this of Juliet and her Romeo.",
+    quoteZh: "世上再沒有比茱麗葉與她的羅密歐更令人悲傷的故事了。",
+    source: "《羅密歐與茱麗葉》Romeo and Juliet, Act V, Scene 3",
+    note: "維洛那親王在劇終面對兩大家族和解與一對戀人殉情時，為全劇寫下的經典結語。"
+  },
+  {
+    letter: "X", word: "xanthippe", phonetic: "/zænˈθɪp.i/", pos: "n.",
+    meaning: "悍婦、潑婦（典出蘇格拉底之妻）",
+    quoteEn: "As curst and shrewd as Socrates' Xanthippe, or a worse, she moves me not.",
+    quoteZh: "就算她像蘇格拉底的悍妻贊西佩一樣暴躁潑辣，甚至更甚，也動搖不了我。",
+    source: "《馴悍記》The Taming of the Shrew, Act I, Scene 2",
+    note: "莎士比亞全部作品中極少數以字母 X 開頭的詞彙，彼特魯喬以此誇口自己能馴服凱瑟琳。"
+  },
+  {
+    letter: "Y", word: "yonder", phonetic: "/ˈjɒn.dər/", pos: "adv. / adj.",
+    meaning: "在那邊、遠處的",
+    quoteEn: "But, soft! What light through yonder window breaks? It is the east, and Juliet is the sun.",
+    quoteZh: "且慢！從那邊窗戶透出來的是什麼光？那是東方，而茱麗葉就是太陽。",
+    source: "《羅密歐與茱麗葉》Romeo and Juliet, Act II, Scene 2",
+    note: "經典「陽台場景」的開場白，以 yonder 營造出仰望戀人時既遙遠又神聖的空間美感。"
+  },
+  {
+    letter: "Z", word: "zenith", phonetic: "/ˈzen.ɪθ/", pos: "n.",
+    meaning: "天頂、巔峰、鼎盛時期",
+    quoteEn: "By accident most strange, bountiful Fortune, now my dear lady, hath mine enemies brought to this shore; and by my prescience I find my zenith doth depend upon a most auspicious star.",
+    quoteZh: "憑藉奇妙的機緣，慷慨的命運女神將我的仇敵帶到了這座海岸；我預見到我命運的巔峰，正繫於一顆最吉祥的星辰。",
+    source: "《暴風雨》The Tempest, Act I, Scene 2",
+    note: "借用占星學「天頂」概念，象徵普洛斯彼羅經過十二年等待後，終於迎來復仇與寬恕的最高點。"
+  }
+];
+
+let currentMode = "gallery";
+let currentLetter = "ALL";
+let focusIndex = 0;
+let currentAudio = null;
+
+function getImgPath(item) {
+  return `assets/images/${item.letter.toLowerCase()}-${item.word}.jpg`;
+}
+
+function getAudioPath(item, type) {
+  return `assets/audio/${item.letter.toLowerCase()}-${item.word}-${type}.mp3`;
+}
+
+// 播放真實 MP3，若本地尚未放入檔案則自動降級使用瀏覽器英式語音朗讀
+function playAudio(letter, type, btnElement) {
+  const item = LEXICON_DATA.find(d => d.letter === letter);
+  if (!item) return;
+
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('playing'));
+
+  if (btnElement) btnElement.classList.add('playing');
+
+  const audioSrc = getAudioPath(item, type);
+  const audio = new Audio(audioSrc);
+  currentAudio = audio;
+
+  audio.onended = () => {
+    if (btnElement) btnElement.classList.remove('playing');
+  };
+
+  audio.onerror = () => {
+    // 備援：Web Speech API 英式發音
+    const textToSpeak = type === 'word' ? item.word : item.quoteEn;
+    const utter = new SpeechSynthesisUtterance(textToSpeak);
+    utter.lang = 'en-GB';
+    utter.rate = 0.88;
+    utter.onend = () => {
+      if (btnElement) btnElement.classList.remove('playing');
+    };
+    window.speechSynthesis.speak(utter);
+  };
+
+  audio.play().catch(() => {
+    audio.onerror();
+  });
+}
+
+function renderAZIndex() {
+  const container = document.getElementById("azIndex");
+  const allBtn = `<button class="az-pill ${currentLetter === 'ALL' ? 'active' : ''}" onclick="filterLetter('ALL')">ALL</button>`;
+  const letters = LEXICON_DATA.map(item =>
+    `<button class="az-pill ${currentLetter === item.letter ? 'active' : ''}" onclick="filterLetter('${item.letter}')">${item.letter}</button>`
+  ).join("");
+  container.innerHTML = allBtn + letters;
+}
+
+function filterLetter(letter) {
+  currentLetter = letter;
+  if (letter !== "ALL") {
+    const idx = LEXICON_DATA.findIndex(d => d.letter === letter);
+    if (idx !== -1) focusIndex = idx;
+  }
+  renderAZIndex();
+  renderApp();
+}
+
+function renderGallery(items) {
+  const app = document.getElementById("appContainer");
+  if (items.length === 0) {
+    app.innerHTML = `<p style="text-align:center; padding:3rem; color:var(--ink-secondary);">找不到符合搜尋條件的詞彙，請嘗試其他關鍵字。</p>`;
+    return;
+  }
+  app.innerHTML = `<div class="gallery-grid">${items.map(item => `
+    <article class="lexicon-card">
+      <div class="painting-frame">
+        <span class="letter-badge">${item.letter}</span>
+        <img src="${getImgPath(item)}" alt="${item.word}" loading="lazy"
+             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%232D241E%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23DFC89A%22 font-family=%22Georgia%22 font-size=%2222%22 text-anchor=%22middle%22 dy=%22.3em%22>${item.letter} — ${item.word}</text></svg>'" />
+      </div>
+      <div class="card-body">
+        <div class="word-header">
+          <h2 class="word-title">${item.word}</h2>
+          <span class="word-phonetic">${item.phonetic} (${item.pos})</span>
+        </div>
+        <div class="word-meaning">${item.meaning}</div>
+        <div class="quote-box">
+          <div class="quote-en">“${item.quoteEn}”</div>
+          <div class="quote-zh">${item.quoteZh}</div>
+          <div class="quote-source">— ${item.source}</div>
+        </div>
+        <div class="audio-controls">
+          <button class="audio-btn" onclick="playAudio('${item.letter}', 'word', this)">🔊 單字發音</button>
+          <button class="audio-btn" onclick="playAudio('${item.letter}', 'quote', this)">🎭 台詞朗誦</button>
+        </div>
+      </div>
+    </article>
+  `).join("")}</div>`;
+}
+
+function renderFocus() {
+  const item = LEXICON_DATA[focusIndex];
+  const app = document.getElementById("appContainer");
+  app.innerHTML = `
+    <div class="focus-container">
+      <div class="painting-frame" style="border-bottom:none; border-right:2px solid var(--antique-gold);">
+        <span class="letter-badge">${item.letter}</span>
+        <img src="${getImgPath(item)}" alt="${item.word}" />
+      </div>
+      <div class="card-body" style="padding:2rem;">
+        <div class="word-header">
+          <h2 class="word-title" style="font-size:2.4rem;">${item.word}</h2>
+          <span class="word-phonetic">${item.phonetic} (${item.pos})</span>
+        </div>
+        <div class="word-meaning" style="font-size:1.15rem;">${item.meaning}</div>
+        <div class="quote-box">
+          <div class="quote-en" style="font-size:1.25rem;">“${item.quoteEn}”</div>
+          <div class="quote-zh">${item.quoteZh}</div>
+          <div class="quote-source">— ${item.source}</div>
+        </div>
+        <p style="font-size:0.92rem; color:var(--ink-secondary); margin-bottom:1.2rem;">
+          <strong>文學導讀：</strong>${item.note}
+        </p>
+        <div class="audio-controls">
+          <button class="audio-btn" onclick="playAudio('${item.letter}', 'word', this)">🔊 單字發音</button>
+          <button class="audio-btn" onclick="playAudio('${item.letter}', 'quote', this)">🎭 台詞朗誦</button>
+        </div>
+      </div>
+    </div>
+    <div class="focus-nav">
+      <button class="nav-arrow" onclick="stepFocus(-1)">← 上一個字母</button>
+      <span style="align-self:center; font-family:'Cinzel', serif; color:var(--velvet-burgundy); font-weight:700;">
+        ${focusIndex + 1} / ${LEXICON_DATA.length}
+      </span>
+      <button class="nav-arrow" onclick="stepFocus(1)">下一個字母 →</button>
+    </div>
+  `;
+}
+
+function stepFocus(delta) {
+  focusIndex = (focusIndex + delta + LEXICON_DATA.length) % LEXICON_DATA.length;
+  currentLetter = LEXICON_DATA[focusIndex].letter;
+  renderAZIndex();
+  renderFocus();
+}
+
+function renderQuiz() {
+  const target = LEXICON_DATA[Math.floor(Math.random() * LEXICON_DATA.length)];
+  const distractors = LEXICON_DATA.filter(d => d.letter !== target.letter)
+    .sort(() => 0.5 - Math.random()).slice(0, 3);
+  const options = [target, ...distractors].sort(() => 0.5 - Math.random());
+
+  const app = document.getElementById("appContainer");
+  app.innerHTML = `
+    <div class="quiz-box">
+      <div style="font-family:'Cinzel', serif; color:var(--antique-gold); font-weight:700; margin-bottom:0.5rem;">
+        VISUAL & LITERARY CHALLENGE
+      </div>
+      <h3 style="margin-bottom:1rem;">請根據油畫意象與劇本引文，選出正確的莎劇詞彙：</h3>
+      <img class="quiz-img" src="${getImgPath(target)}" alt="Quiz Painting" />
+      <p style="font-family:'Cormorant Garamond', serif; font-size:1.2rem; font-style:italic; margin-bottom:0.4rem;">
+        “${target.quoteEn}”
+      </p>
+      <p style="font-size:0.9rem; color:var(--ink-secondary);">${target.meaning}（${target.source}）</p>
+      <div class="quiz-options">
+        ${options.map(opt => `
+          <button class="quiz-opt" onclick="checkQuiz(this, '${opt.word}', '${target.word}', '${target.letter}')">
+            ${opt.word}
+          </button>
+        `).join("")}
+      </div>
+      <div id="quizFeedback" style="margin-top:1.2rem; font-weight:600;"></div>
+    </div>
+  `;
+}
+
+function checkQuiz(btn, chosen, answer, letter) {
+  const buttons = document.querySelectorAll(".quiz-opt");
+  buttons.forEach(b => b.disabled = true);
+  const fb = document.getElementById("quizFeedback");
+
+  if (chosen === answer) {
+    btn.classList.add("correct");
+    fb.innerHTML = `<span style="color:#2E5A36;">答對了！</span> <button class="nav-arrow" style="margin-left:0.8rem;" onclick="renderQuiz()">下一題 →</button>`;
+    playAudio(letter, 'word', null);
+  } else {
+    btn.classList.add("wrong");
+    buttons.forEach(b => { if (b.textContent.trim() === answer) b.classList.add("correct"); });
+    fb.innerHTML = `<span style="color:#8B2626;">正確答案是 ${answer}</span> <button class="nav-arrow" style="margin-left:0.8rem;" onclick="renderQuiz()">下一題 →</button>`;
+  }
+}
+
+function renderApp() {
+  const query = document.getElementById("searchInput").value.trim().toLowerCase();
+  if (currentMode === "focus") {
+    renderFocus();
+    return;
+  }
+  if (currentMode === "quiz") {
+    renderQuiz();
+    return;
+  }
+  const filtered = LEXICON_DATA.filter(item => {
+    const matchLetter = currentLetter === "ALL" || item.letter === currentLetter;
+    const matchQuery = !query ||
+      item.word.toLowerCase().includes(query) ||
+      item.meaning.includes(query) ||
+      item.source.toLowerCase().includes(query);
+    return matchLetter && matchQuery;
+  });
+  renderGallery(filtered);
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentMode = btn.dataset.mode;
+    renderApp();
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", () => {
+  if (currentMode !== "gallery") {
+    currentMode = "gallery";
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === "gallery"));
+  }
+  renderApp();
+});
+
+renderAZIndex();
+renderApp();
+</script>
+</body>
+</html>
