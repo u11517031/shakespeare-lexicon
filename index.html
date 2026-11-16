@@ -351,6 +351,7 @@
     .focus-nav {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       max-width: 960px;
       margin: 1rem auto 0;
     }
@@ -364,11 +365,31 @@
       font-weight: 600;
       border-radius: 4px;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
 
     .nav-arrow:hover {
       background: var(--velvet-burgundy);
       color: var(--gold-light);
+    }
+
+    .kbd-hint {
+      text-align: center;
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+    }
+
+    kbd {
+      display: inline-block;
+      padding: 0.1rem 0.45rem;
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: var(--bg-card);
+      border: 1px solid var(--antique-gold);
+      border-radius: 3px;
+      color: var(--velvet-burgundy);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     }
 
     /* 隨堂測驗模式 Quiz */
@@ -448,7 +469,7 @@
 <main id="appContainer"></main>
 
 <footer>
-  Shakespearean Lexicon A–Z · Museum Aesthetic Edition · 專為英語文學與詞彙賞析設計
+  Shakespearean Lexicon A–Z · Museum Aesthetic Edition · 支援鍵盤 <kbd>←</kbd> <kbd>→</kbd> 方向鍵快速切換單字
 </footer>
 
 <script>
@@ -676,7 +697,6 @@ function getAudioPath(item, type) {
   return `assets/audio/${item.letter.toLowerCase()}-${item.word}-${type}.mp3`;
 }
 
-// 播放真實 MP3，若本地尚未放入檔案則自動降級使用瀏覽器英式語音朗讀
 function playAudio(letter, type, btnElement) {
   const item = LEXICON_DATA.find(d => d.letter === letter);
   if (!item) return;
@@ -699,7 +719,6 @@ function playAudio(letter, type, btnElement) {
   };
 
   audio.onerror = () => {
-    // 備援：Web Speech API 英式發音
     const textToSpeak = type === 'word' ? item.word : item.quoteEn;
     const utter = new SpeechSynthesisUtterance(textToSpeak);
     utter.lang = 'en-GB';
@@ -734,22 +753,33 @@ function filterLetter(letter) {
   renderApp();
 }
 
+function openFocusAt(index) {
+  focusIndex = index;
+  currentLetter = LEXICON_DATA[focusIndex].letter;
+  currentMode = "focus";
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === "focus"));
+  renderAZIndex();
+  renderFocus();
+}
+
 function renderGallery(items) {
   const app = document.getElementById("appContainer");
   if (items.length === 0) {
     app.innerHTML = `<p style="text-align:center; padding:3rem; color:var(--ink-secondary);">找不到符合搜尋條件的詞彙，請嘗試其他關鍵字。</p>`;
     return;
   }
-  app.innerHTML = `<div class="gallery-grid">${items.map(item => `
+  app.innerHTML = `<div class="gallery-grid">${items.map(item => {
+    const originalIdx = LEXICON_DATA.findIndex(d => d.letter === item.letter);
+    return `
     <article class="lexicon-card">
-      <div class="painting-frame">
+      <div class="painting-frame" style="cursor:pointer;" title="點擊進入單卡精讀模式" onclick="openFocusAt(${originalIdx})">
         <span class="letter-badge">${item.letter}</span>
         <img src="${getImgPath(item)}" alt="${item.word}" loading="lazy"
              onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%232D241E%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23DFC89A%22 font-family=%22Georgia%22 font-size=%2222%22 text-anchor=%22middle%22 dy=%22.3em%22>${item.letter} — ${item.word}</text></svg>'" />
       </div>
       <div class="card-body">
         <div class="word-header">
-          <h2 class="word-title">${item.word}</h2>
+          <h2 class="word-title" style="cursor:pointer;" onclick="openFocusAt(${originalIdx})">${item.word}</h2>
           <span class="word-phonetic">${item.phonetic} (${item.pos})</span>
         </div>
         <div class="word-meaning">${item.meaning}</div>
@@ -764,7 +794,7 @@ function renderGallery(items) {
         </div>
       </div>
     </article>
-  `).join("")}</div>`;
+  `}).join("")}</div>`;
 }
 
 function renderFocus() {
@@ -803,6 +833,7 @@ function renderFocus() {
       </span>
       <button class="nav-arrow" onclick="stepFocus(1)">下一個字母 →</button>
     </div>
+    <div class="kbd-hint">💡 提示：可直接使用鍵盤 <kbd>←</kbd> <kbd>→</kbd> 方向鍵快速切換上下一個單字</div>
   `;
 }
 
@@ -895,6 +926,28 @@ document.getElementById("searchInput").addEventListener("input", () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === "gallery"));
   }
   renderApp();
+});
+
+// 鍵盤左右方向鍵控制切換單字
+document.addEventListener("keydown", (e) => {
+  // 若正在搜尋框內輸入文字，不觸發換頁
+  if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    if (currentMode !== "focus") {
+      openFocusAt(currentLetter === "ALL" ? 0 : focusIndex);
+    } else {
+      stepFocus(1);
+    }
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    if (currentMode !== "focus") {
+      openFocusAt(currentLetter === "ALL" ? LEXICON_DATA.length - 1 : focusIndex);
+    } else {
+      stepFocus(-1);
+    }
+  }
 });
 
 renderAZIndex();
